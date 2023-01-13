@@ -1,24 +1,36 @@
-import { Controller, Get } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
+import { CreatePostDto } from './dto/CreatePost.dto'
+import { UpdatePostDto } from './dto/UpdatePost.dto'
+import { PostService } from './post.service'
 
-interface IPosts {
-  id: number,
-  test: string
-}
 
 @Controller('post')
 export class PostController {
-  posts: Array<IPosts>
-
-  constructor() {
-    this.posts = [
-      { id: 1, test: 'One' },
-      { id: 2, test: 'Two' },
-      { id: 3, test: 'Three' }
-    ]
+  constructor(private readonly postService: PostService) {
   }
 
   @Get()
-  async getAll() {
+  private async getAll() {
+    return this.postService.getAll()
+  }
 
+  @Get(':id')
+  private async getPostById(@Param('id') id: string) {
+    return this.postService.getPostById(id)
+  }
+
+  @Post()
+  private async addPost(@Body() dto: CreatePostDto) {
+    return this.postService.addPost(dto)
+  }
+
+  @Put(':id')
+  private async updatePostById(@Param('id') id: string, @Body() dto: UpdatePostDto) {
+    return this.postService.updatePostById(id, dto)
+  }
+
+  @Delete(':id')
+  private async deletePostById(@Param('id') id: string) {
+    return this.postService.deletePostById(id)
   }
 }
